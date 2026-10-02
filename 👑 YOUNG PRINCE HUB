@@ -1,0 +1,106 @@
+-- [[ YOUNG PRINCE HUB V1 - LUXURY EDITION ]] --
+local Fluent = loadstring(game:HttpGet("https://github.com"))()
+
+-- Luxury Window Configuration (Acrylic Blur & Premium Dark Theme)
+local Window = Fluent:CreateWindow({
+    Title = "👑 YOUNG PRINCE HUB",
+    SubTitle = "V1 | Luxury Premium Suite",
+    TabWidth = 160,
+    Size = UDim2.fromOffset(580, 460),
+    Acrylic = true, -- Enables the premium translucent glass effect
+    Theme = "Dark",
+    MinimizeKey = Enum.KeyCode.LeftControl
+})
+
+-- Creating Interface Tabs
+local Tabs = {
+    Main = Window:CreateTab({ Title = "Automation", Icon = "sparkles" }),
+    Misc = Window:CreateTab({ Title = "Misc Settings", Icon = "settings" })
+}
+
+-- [[ GLOBAL AUTOMATION VARIABLES ]] --
+_G.AutoHarvest = false
+_G.AutoSell = false
+_G.AntiAFK = true
+
+-- 1. Background Loop: Auto Harvest
+task.spawn(function()
+    while true do
+        task.wait(0.5) -- Anti-lag optimization delay
+        if _G.AutoHarvest then
+            pcall(function()
+                -- PLACE THE GAME'S SPECIFIC HARVEST REMOTE EVENT HERE
+                -- Example: game:GetService("ReplicatedStorage").Remotes.Harvest:FireServer()
+                print("Harvesting plots...") 
+            end)
+        end
+    end
+end)
+
+-- 2. Background Loop: Auto Sell
+task.spawn(function()
+    while true do
+        task.wait(1) -- Optimization delay for bulk sales
+        if _G.AutoSell then
+            pcall(function()
+                -- PLACE THE GAME'S SPECIFIC SELL REMOTE EVENT HERE
+                -- Example: game:GetService("ReplicatedStorage").Remotes.Sell:FireServer()
+                print("Selling stock...") 
+            end)
+        end
+    end
+end)
+
+-- [[ UI INTERACTIVE ELEMENTS ]] --
+
+-- Auto Harvest Toggle Switch
+local ToggleHarvest = Tabs.Main:AddToggle("AutoHarvestToggle", {
+    Title = "🌾 Auto Harvest Matured Plots", 
+    Default = false 
+})
+
+ToggleHarvest:OnChanged(function(Value)
+    _G.AutoHarvest = Value
+    Fluent:Notify({
+        Title = "Young Prince Hub",
+        Content = Value and "Auto Harvest has been Activated ✨" or "Auto Harvest Deactivated ❌",
+        Duration = 3
+    })
+end)
+
+-- Auto Sell Toggle Switch
+local ToggleSell = Tabs.Main:AddToggle("AutoSellToggle", {
+    Title = "💰 Liquefy Stock Inventory (Auto Sell)", 
+    Default = false 
+})
+
+ToggleSell:OnChanged(function(Value)
+    _G.AutoSell = Value
+    Fluent:Notify({
+        Title = "Young Prince Hub",
+        Content = Value and "Auto Sell has been Activated ✨" or "Auto Sell Deactivated ❌",
+        Duration = 3
+    })
+end)
+
+-- [[ MISC / PROTECTION ]] --
+local ToggleAntiAFK = Tabs.Misc:AddToggle("AntiAFKToggle", {
+    Title = "🛡️ Premium Anti-AFK Protection", 
+    Default = true 
+})
+
+ToggleAntiAFK:OnChanged(function(Value)
+    _G.AntiAFK = Value
+end)
+
+-- Anti-AFK Execution Loop (Prevents server disconnection)
+local VirtualUser = game:GetService("VirtualUser")
+game:GetService("Players").LocalPlayer.Idled:Connect(function()
+    if _G.AntiAFK then
+        VirtualUser:CaptureController()
+        VirtualUser:ClickButton2(Vector2.new(0,0))
+    end
+end)
+
+-- Set default focus to the main automation tab on startup
+Tabs.Main:Select()
